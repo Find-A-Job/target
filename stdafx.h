@@ -13,3 +13,10 @@
 
 
 // TODO:  在此处引用程序需要的其他头文件
+#include <stdlib.h>
+#include <time.h>
+#include <windowsx.h>
+#include <Windows.h>
+#include <math.h>
+#include <locale.h>
+#include <io.h>
