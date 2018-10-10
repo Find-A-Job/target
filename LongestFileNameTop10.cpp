@@ -8,7 +8,7 @@
 //		文件夹名长度是216
 //		经实践发现以上总结具有局限性，文件名长度与路径有关，路径本身越长，文件名越短
 //		以fopen_s函数为测试基准，vs2015, win7 service pack 1 x64,
-//		绝地路径：
+//		绝对路径：
 //		当路径带1个斜杠时（如d://abc.txt）路径总长度不能超过259（包括字符串结束标志NUL)
 //		当路径带2个斜杠时（如d://a//abc.txt）路径总长度不能超过260（包括字符串结束标志NUL)
 //		当路径带3个斜杠时（如d://a//b//abc.txt）路径总长度不能超过262（包括字符串结束标志NUL)
@@ -16,6 +16,7 @@
 //		当路径带5个及以上斜杠时（如d://a//b//c//d//abc.txt）路径总长度不能超过262（包括字符串结束标志NUL)
 //		相对路径：
 //		vs2015会使用宏自动补全路径，文件名长度为203（包括字符串结束标志NUL)
+//		已经完成主体功能，不检查隐藏文件和系统文件
 #include "stdafx.h"
 #include "Macor.h"
 
@@ -24,12 +25,13 @@
 unsigned int DirNum = 0;		//遍历文件夹数量
 unsigned int FileNum = 0;		//遍历文件数量
 unsigned int SpecialNum = 0;	//特殊文件数量
+struct FILETYPE ft = { NULL };
 struct FNINFO *hTop = NULL;		//文件数组10，从长到短排序
 
 //----------------------------
 //
-int MainDealWithArgv(void);
-int MainSearchFile(void);
+int MainDealWithArgv(int, TCHAR **, TCHAR *);
+int MainSearchFile(TCHAR *);
 int MainShowArr(void);
 int MainCleanUp(struct FNINFO*);
 
@@ -42,13 +44,17 @@ int KeepTop10(struct FNINFO*);
 
 int _tmain(int argc, TCHAR **argv)
 {
+	/*函数内部变量*/
+	TCHAR msg_t[MSGSIZE] = { NULL };
+	TCHAR FilePath[MAXPATHSIZE] = { NULL };
+
 	//----------------------------
 	//处理命令行参数及初始化配置
-	MainDealWithArgv();
+	MainDealWithArgv(argc, argv, FilePath);
 
 	//----------------------------
 	//遍历文件
-	MainSearchFile();
+	MainSearchFile(FilePath);
 
 	//----------------------------
 	//打印数组
@@ -63,16 +69,34 @@ int _tmain(int argc, TCHAR **argv)
 }
 //----------------------------
 //
-int MainDealWithArgv(void) {
-	//使_tprintf()能输出中文
-	setlocale(LC_ALL, "chs");		//配置地域信息，使程序本地化
+int MainDealWithArgv(int argc, TCHAR **argv, TCHAR *out_filepath) {
+	/*函数内部变量*/
+	
+
+	/*...*/
+	setlocale(LC_ALL, "chs");		//配置地域信息，使程序本地化	//使_tprintf()能输出中文
+	switch (argc)
+	{
+	case 1: {
+		_tprintf(_T("默认路径，\"D:\""));
+		CopyMemory(out_filepath, _T("D:"), 4);
+	}break;
+	case 2: {
+		CopyMemory(out_filepath, argv[1], 2 * wcslen(argv[1]));	//CopyMemory使用字节流BYTE, TCHAR是BYTE的两倍
+	}break;
+	default:
+		_tprintf(_T("未定义该行为，暂时使用默认路径，\"D:\""));
+		CopyMemory(out_filepath, _T("D:"), 4);
+		break;
+	}
 	hTop = (struct FNINFO *)malloc(sizeof(struct FNINFO));
 	ZeroMemory(hTop, sizeof(struct FNINFO));
+	ZeroMemory(&ft, sizeof(struct FILETYPE));
 	hTop->next = NULL;
 
 	return 0;
 }
-int MainSearchFile(void) {
+int MainSearchFile(TCHAR *in_filepath) {
 	/*函数内部变量*/
 	struct _tfinddata_t FileInfo = { NULL };			//文件信息结构体
 	TCHAR msg_t[MSGSIZE] = { NULL };
@@ -82,7 +106,7 @@ int MainSearchFile(void) {
 	__int64 fileHandle = 0;								//文件句柄
 
 	/*...*/
-	_stprintf_s(msg_t, _T("D:\\vs2015\\3-安装"));
+	_stprintf_s(msg_t, _T("%s"), in_filepath);
 	RecursionDirAndFile(msg_t); 
 
 	printf("文件夹:%u, 文件:%u, 特殊文件:%u\n", DirNum, FileNum, SpecialNum);

@@ -14,5 +14,15 @@ struct FNINFO
 	struct FNINFO *next;
 };
 
+struct FILETYPE
+{
+	unsigned int DirNum;
+	unsigned int SysFileNum;
+	unsigned int HideFileNum;
+	unsigned int ArchNum;
+	unsigned int NorNum;
+	unsigned int RONum;
+};
+
 #endif // !MACOR_H_ZMX
 
