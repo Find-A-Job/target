@@ -109,7 +109,7 @@ int MainReadWork(TCHAR *in_filepath, STRUCTWORDTIMES *in_htop) {
 		if (feof(FileRead) != 0) {				//返回0表示未读到文件尾
 			if (WordIndex > 0) {
 				msg[WordIndex] = '\0';
-				DealWithWord(msg, in_htop);				//进行单词比较
+				DealWithWord(msg, in_htop);		//进行单词比较
 				ZeroMemory(msg, _countof(msg));
 				WordIndex = 0;
 			}
@@ -118,7 +118,14 @@ int MainReadWork(TCHAR *in_filepath, STRUCTWORDTIMES *in_htop) {
 		if ((65 <= OneWord && 90 >= OneWord) || (97 <= OneWord && 122 >= OneWord)) {	//找到字母
 			msg[WordIndex] = OneWord;
 			WordIndex += 1;
-			;
+			if (WordIndex < MSGSIZE) {
+				;
+			}
+			else {
+				_tprintf(_T("单词过长\n"));
+				system("pause");
+				exit(1);
+			}
 		}
 		else if ((65 > OneWord) || (90 < OneWord && 97 > OneWord) || (122 > OneWord)) {		//发现非字母
 			if (WordIndex > 0) {
