@@ -5,7 +5,7 @@
 //
 //分析：大数乘法,模拟乘法叠加
 //		以数组代替整型数值
-//
+//		本程序最大测试阶乘824
 #include "stdafx.h"
 #include "Macor.h"
 
@@ -33,6 +33,7 @@ int _tmain(int argc, TCHAR **argv)
 	TCHAR num2[HUGESIZE + 1] = { NULL };
 	TCHAR num5[HUGESIZE * 2 + 1] = { NULL };
 
+
 	ZeroMemory(num1, _countof(num1) * 2);
 	ZeroMemory(num2, _countof(num2) * 2);
 	ZeroMemory(num5, _countof(num5) * 2);
@@ -48,31 +49,67 @@ int _tmain(int argc, TCHAR **argv)
 	//------------------------------------------------
 	//
 	MainShowData(num5);
+	_tprintf(_T("\n"));
 
-	//------------------------------------------------
-	//
 
-	//system("pause");
     return 0;
 }
 //------------------------------------------------
 //
 int MainDealWithArgv(int argc, TCHAR **argv, TCHAR *out_num1, TCHAR *out_num2) {
 	/*函数内部变量*/
+	TCHAR num6[8] = { NULL };
+	TCHAR num7[HUGESIZE * 2 + 1] = { NULL };	//乘数
+	TCHAR num8[HUGESIZE * 2 + 1] = { NULL };	//积
+	int num = 0;
 
 	/*...*/
 	setlocale(LC_ALL, "chs");
 	switch (argc)
 	{
 	case 1: {
-		_tprintf(_T("请输入两个数(每个数不超过1024位)\n"));
+		_tprintf(_T("输入一个数计算该数阶乘(该数小于等于824)\n"));
+		_tprintf(_T("输入两个数计算乘积(每个数不超过1024位)\n"));
 		exit(1);
 		;
 	}break;
-	case 2: {
-		_tprintf(_T("请输入两个数(每个数不超过1024位)\n"));
+	case 2: {			//计算阶乘
+		//------------------------------------------------
+		//
+		for (int i = 0; i < wcslen(argv[1]); ++i) {
+			num += (int)((argv[1][i] - 48) * pow(10, (double)wcslen(argv[1]) - 1 - i));
+		}
+		ZeroMemory(num6, _countof(num6) * 2);
+		ZeroMemory(num7, _countof(num7) * 2);
+		ZeroMemory(num8, _countof(num8) * 2);
+		num7[0] = 48 + 1;
+		for (int i = 0, j = 0, h = 0; i < num; ++i) {
+			h = (i + 1) / 100;
+			if (h > 0) {
+				num6[j] = h + 48;
+				j += 1;
+			}
+			h = ((i + 1) / 10) % 10;
+			if (j > 0 || h>0) {
+				num6[j] = h + 48;
+				j += 1;
+			}
+			h = ((i + 1) % 10);
+			if (j > 0 || h>0) {
+				num6[j] = h + 48;
+				j += 1;
+			}
+			CopyMemory(num8, num7, _countof(num8) * 2);
+			MainMncfdj(num6, num8, num7);
+			h = 0;
+			j = 0;
+		}
+		MainShowData(num7);
+
+		//system("pause");
+		//_tprintf(_T("请输入两个数(每个数不超过1024位)\n"));
 		exit(1);
-		;
+		//return 0;
 	}break;
 	case 3: {
 		for (int i = 0; i < wcslen(argv[1]); ++i) {

@@ -16,3 +16,4 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <Windows.h>
+#include <math.h>
