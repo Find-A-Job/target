@@ -7,6 +7,7 @@
 5.编译时需要vs的cl.exe才能工作
 6.执行安装指令时应该指定编译后文件的存放目录，或在某目录下执行指令，这样就会把编译后的文件放在该目录下
 
+#include "ssl.h"
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "libeay32.lib")
 #pragma comment(lib, "ssleay32.lib")
