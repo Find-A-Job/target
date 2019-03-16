@@ -1,2 +1,3 @@
 需要用到的C++第三方库：
-mysql,openssl,
+mysql，数据库
+openssl，https协议
